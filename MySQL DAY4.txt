@@ -1,0 +1,85 @@
+MySQL DAY4
+====================
+执行事务
+事务机制：确保数据一致性
+事务具有4个属性：
+1.原子性：一个事务是一个不可分割的工作单位，事务中包括的各个操作要么都做，要么都不做
+
+2.一致性：事务必须是使数据库从一个一致性状态变到另一个一致性状态
+
+3.隔离性：一个事务的执行不能被其他事务干扰。
+
+4.持久性：一个事务一旦提交，它对数据库中数据的改变就应该是永久性的。接下来的其他操作或故障不应该对其有任何影响。
+
+
+【注意】
+1.mysql中默认sql语句的结果自动commit提交到数据库
+2.开始需要写start transaction,这样自动commit就会被禁用，直到我们用commit提交 或者 rollback回滚 来终止这个transaction
+
+start transaction;
+sql1;
+sql2;
+...
+sqln;
+commit;
+
+例子：
+start transaction;
+insert into instructors values ('Han','M','CEO');
+commit;
+
+
+start transaction;
+update instructors set rank = 'instructor' where name = 'Han';
+rollback;
+
+练习题：
+编写一个transaction，往customers中插入一条记录，再修改其中一条记录的某个属性值，最后分别使用commit、rollback提交或回滚之前的两步操作。打开两个mysql客户端窗口，检验结果。
+
+
+
+begin;
+savepoint sp1;
+insert into instructors values('Wei','M','instructor');
+savepoint sp2;
+insert into instructors value('Feng','M','manager');
+savepoint sp3;
+insert into instructors value('Zhao','M','instructor');
+
+select * from instructors;
+
+rollback to sp3;
+select * from instructors;
+release savepoint sp3;
+
+练习：创建一个事务，加savepoint,在customers中插入一条记录，加savepoint,修改该记录中的某个字段信息，加savepoint,在将这条记录删除.回滚到各个savepoint查看不同状态。
+
+【注意】
+MySQL的rollback操作只适用于DML（data manipulation language）数据操纵语言：select,insert,update,delete.
+
+DDL（data definition language）数据定义语言，比DML要多：create,alter,drop等。DDL主要是用在定义或者改变表的结果，数据类型，表的约束等初始化工作上，他们大多在建立表的时候使用。
+
+
+PyMySQL库介绍
+
+见代码
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

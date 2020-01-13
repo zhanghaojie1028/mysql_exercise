@@ -1,0 +1,260 @@
+数据库编程 第一天
+=================
+关系型数据库建模构建块：
+
+数据是以行和列的形式存储数据
+这一系列的行和列称为表(关系)
+表中每一行表示一条记录(元组)
+表中每一列表示记录的一个属性
+一组表组成了数据库
+表与表之间的逻辑关联叫关系
+
+启动mysql客户端
+mysql -u root -p
+123456
+
+退出MySQL客户端程序（断开与MySQL服务器的连接）：
+exit
+quit
+\q
+
+SQL语言语法：
+以关键字开头
+以;结束
+不区分字母大小写
+
+【注意】表的名字区分字母大小写
+
+
+SQL基础
+创建数据库
+create database 数据库名;
+例子：
+create database testDB;
+
+查看mysql中的数据库
+SHOW DATABASES;
+show databases;
+
+选择数据库
+use 数据库名;
+例子：
+use testDB;
+
+创建表格
+create table 表名(
+第一列名 数据类型,
+第二列名 数据类型,
+...
+第N列名 数据类型
+);
+
+
+数据类型：
+字符串：
+- 定长 char
+- 变长 varchar
+数值型：
+- 整型 int
+- 定长小数 decimal, e.g. decimal(5，2) 123.45
+- 浮点型 float
+日期和时间：
+- datetime, date, time
+
+例子：
+
+create table customers(
+ID int,
+name varchar(20),
+age int,
+address char(25),
+salary decimal(18,2)
+);
+
+customers:顾客
+name：姓名
+age:年龄
+address：地址
+salary：工资
+
+查看数据库中的表有哪些
+show tables;
+
+查看表的名称，列名，以及列对应的数据类型
+show create table 表名;
+例子：
+show create table customers;
+
+练习题：
+创建数据库schools(学校)
+使用该数据库，提示：use
+
+创建表students,其中包括字段:
+id学号 int;
+name姓名 varchar(20);
+gender性别 char(20);
+age年龄 int
+
+查询当前数据库中的所有表格
+查询表students中的所有属性名称和数据类型
+
+再创建一个叫teachers的表
+
+insert插入语句
+两种语法：
+1.
+insert into 表名(列名1，列名2，...，列名n)
+values(值1,值2,...,值n);
+
+例子：
+insert into customers(ID,name,age,address,salary)
+values(1,'Ann',30,'Beijing',2000.00);
+
+同时插入多行数据
+insert into customers(ID,name,age,address,salary)
+values
+(2,'Kate',25,'Shanghai',1500.00),
+(3,'Jimmy',23,'Shenzhen',2000.00),
+(4,'Bob',25,'Beijing',6500.00),
+(5,'Susan',27,'Shanghai',8500.00),
+(6,'David',22,'Shenzhen',4500.00);
+
+2.
+insert into customers
+values(7,'Mary',24,'Hangzhou',10000.00);
+
+用一个表去填充另一个表
+insert into 第一个表名 (列名1，列名2，...列名n)
+select 列名1，列名2，...列名n
+from 第二个表名;
+
+select语句
+投影
+select 列名1,列名2,...，列名n
+from 表名;
+
+例子：
+select name from customers;
+
+思考题：
+列出customers表中，顾客的姓名name，年龄age
+select name, age from customers;
+
+选中所有属性
+select * from customers;
+
+
+
+create table customers2(
+ID int,
+name varchar(20),
+age int,
+address char(25),
+salary decimal(18,2)
+);
+
+
+insert into customers2(ID,name,age,address,salary)
+select ID,name,age,address,salary from customers;
+
+select...where...选择
+select 列名1，列名2,...列名n 
+from 表名
+where 条件;
+其中，条件语句内可以是比较或者逻辑运算符
+
+
+例子：
+select * from customers
+where id = 1;
+
+
+运算符总结
+代数: +, -, *, /, %
+比较: =, !=, <>, >, <, >=, <=, !<, !>
+逻辑： AND, BETWEEN, IN, LIKE, NOT, OR, IS NULL
+BETWEEN：在。。之间
+LIKE:像，一般与通配符一起使用
+IS NULL: 为空
+
+
+思考题：
+选出customers表中，年纪大于等于28岁的顾客的姓名，年纪和工资信息
+select name,age,salary from customers
+where age >= 28;
+
+
+练习题：
+创建数据库schools(学校)
+使用该数据库，提示：use
+
+创建表students,其中包括字段:
+id学号 int;
+name姓名 varchar(20);
+gender性别 char(20);
+age年龄 int
+
+查询当前数据库中的所有表格
+查询表students中的所有属性名称和数据类型
+
+再创建一个叫teachers的表,加一列叫姓名的char(25)
+
+~~~~~~~~以下内容可以留在晚自习完成~~~~~~~~~~~
+把住在Beijing的顾客的姓名和住址选中，并插入到一个叫customers_bj的新的表中
+提示：1.create customers_bj...
+
+      2.insert into ....(name,address)
+      select name,address from ...
+      where ...=...;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

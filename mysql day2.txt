@@ -1,0 +1,457 @@
+MySQL DAY2
+=================
+create database ...;
+
+show databases;
+
+use testDB;
+
+create table orders(
+o_id int not null,
+o_name varchar(50),
+date datetime,
+c_id int,
+amount decimal(10,2)
+);
+
+show tables;
+
+insert into orders values
+(100,'computer','2011-11-1 12:34:56',1,8800);
+
+insert into orders values
+(101,'iphone','2011-10-10 15:20:45',3,6600),
+(102,'microphone','2017-09-13 09:34:56',4,450),
+(103,'ipad','2014-02-27 18:24:17',4,9200),
+(104,'iwatch','2017-09-13 10:34:22',2,5700),
+(105,'mouse','2012-06-23 09:44:33',5,200),
+(106,'pen','2013-03-31 21:34:23',6,300),
+(107,'iphone','2016-04-23 07:19:22',7,7800),
+(108,'ipad','2016-02-12 20:20:20',5,12000);
+
+select * from orders;
+
+update
+update 表名
+set 列名1=值1，列名2=值2，...,列名n=值n
+where 条件;
+
+例子:
+update customers
+set salary = 3500
+where name = 'Kate';
+【注意】update语言如果不写where 条件语句，将会把表中所有的行中的值改变
+
+练习题：
+把customers表中，年龄大于等于25岁，并且地址是北京或者上海的，这样的人的工资上调10%
+提示：update,and,(),or,where
+
+update customers
+set salary = salary * 1.1
+where age >= 25 and (address = 'Beijing' or address ='Shanghai');
+
+【注意】MySQL5.7中不是别百分号，用小数表示
+
+
+Delete
+delete from 表名
+where 条件;
+
+例子：
+delete from customers where id = 8;
+
+【注意】delete 语句如果没有where 条件，将会把表中所有数据删除
+
+
+count(*)表示当前表中一共有多少条记录
+select count(*) from customers;
+
+提问：
+orders表中一共有多少条记录
+
+
+like 
+通配符%: 0,1,或更多
+通配符_: 单一数字或字符
+
+【注意】浮点数100.00 匹配用？___.__
+
+select * from 表名
+where 列名 like 'XXXX%';
+
+select * from 表名
+where 列名 like '_X_X';
+
+思考题：
+找出customers表中，name以B开头的顾客的姓名和年龄
+select * from customers
+where name like 'B%';
+
+找出工资是4位数的，并且是7000多元的顾客的信息
+select * from customers
+where salary like '7___.__';
+
+找出address倒数第四个字符是z，并且倒数第三个字符是h, 这样的顾客的姓名和address
+select * from customers
+where address like '%zh__';
+
+limit
+限制
+select * from 表名 limit n;
+其中，n指返回表中前n条记录
+
+例子：
+select * from customers limit 3;
+
+select * from 表名 limit m,n;
+从第m+1条记录开始，返回n条
+【注意】表中第一行的索引是1
+
+
+练习:
+返回customers中，第2到第5条数据
+select * from customers limit 1,4;
+
+返回customers表中，工资大于4000元，满足这样条件的前3条记录
+提示：limit语句永远放在sql语言的最后
+select...where...limit...;
+
+select * from customers
+where salary > 4000
+limit 3;
+
+order by 排序
+ASC 升序
+DESC 降序
+
+select 列名 from 表名
+where 条件
+order by 列名 ASC;
+
+例子：
+select name, age from customers
+order by age DESC;
+
+select name from customers
+order by age DESC;
+
+【注意】order by语句后面出现的列名，可以不在select语句中
+
+练习题：
+insert into customers values(8,'John',25,'Beijing',12000.00);
+
+把customers中，城市为北京的顾客，按照年纪的升序排序
+
+把customers中，城市为北京的顾客，按照年纪的升序排序，并且按照工资的降序排列
+
+把customers中，城市为北京的顾客，按照年纪的升序排序，并且按照工资的降序排列，只返回结果中的第一条记录
+
+提示：select...from...where...
+      order by ...ASC,...DESC 
+      limit n;
+
+select * from customers
+where address = 'Beijing'
+order by age ASC, salary DESC
+limit 1;
+
+
+思考题：
+把满足以下条件的顾客的工资上调10%：address倒数第四个字符是z，并且倒数第三个字符是h。
+提示：update，like，通配符
+
+update customers
+set salary = salary * 1.1
+where address like '%zh__';
+
+
+把工资是五位数的顾客的姓名和工资，按照工资的降序打印出来
+select name,salary from customers
+where salary like '_____.__'
+order by salary DESC;
+
+选中排列在第N位的数据
+思考题：
+选出customers表中，工资排在第5位的顾客的信息
+select * from customers
+order by salary DESC
+limit 4,1;
+
+
+选出customers表中，工资排在倒数第1位的顾客的信息
+select * from customers
+order by salary ASC
+limit 1;
+
+提示：order by,limit
+
+随机选择表中数据
+select * from 表名
+order by rand()
+limit N;
+
+思考题：
+从orders表中，随机选取3条数据
+select * from orders
+order by rand()
+limit 3;
+
+
+group by分组
+常与聚合函数一起用
+
+常用的聚合函数：
+count()总数
+sum()求和
+avg()平均值
+min()最小值
+max()最大值
+
+select 列名1,...,列名n,聚合函数(表达式) from 表名
+where 条件
+group by 列名1,...,列名n
+order by ...;
+
+例子：
+select address,max(salary) from customers
+group by address;
+
+演示错误：
+select name,address,max(salary) from customers
+group by address;
+
+【注意】
+1.group by语句必须放在where语句之后，order by语句之前
+2.group by之后的列，必须出现在select语句之中，或者聚合函数表达式中。
+  select语句中的列，如果不出现在聚合函数表达式中，则必须出现在group   by语句中
+
+练习题：
+列出各个城市的平均工资，按照平均工资由小到大排序
+提示: avg(),group by,order by
+
+select address, avg(salary) from customers
+group by address
+order by avg(salary); 
+
+
+列出各个城市里的顾客的总数
+提示：count(*)
+select address, count(*) from customers
+group by address;
+
+
+思考题：
+列出城市平均工资大于4000的各个城市的信息
+
+演示错误：where语句中不能出现聚合函数
+select address,avg(salary) from customers
+where avg(salary) > 4000;
+
+having语句：对group by产生的分组进行筛选
+
+例子：
+select address,avg(salary) from customers
+group by address
+having avg(salary) > 4000;
+
+【注意】
+1.having 语句通常与group by联合使用，用来过滤由group by语句返回的记录集合
+2.having 语句的存在弥补了where语句不能与聚合函数联合使用的不足
+
+select 列名1,...,列名n,聚合函数(表达式) from 表名
+where 条件
+group by 列名1,...,列名n
+having 条件1，...,条件n;
+
+练习题：
+列出各个城市中，年龄大于25岁的顾客里面的最高收入，并且该最高收入不得低于3000元，将这些记录按照最高收入由小到大排列
+提示:max(),where,group by,having,order by...
+
+select address,max(salary) from customers
+where age <= 25
+group by address
+having max(salary) >= 3000
+order by max(salary);
+
+列出非北京的各个城市的平均工资，按照平均工资由小到大排序，并且只列出前两名的城市信息
+
+【方法一】
+select address,avg(salary) from customers 
+group by address 
+having address != 'Beijing';
+
+【方法二】
+select address,avg(salary) from customers 
+where address != 'Beijing'
+group by address;
+【注意】不加group by语句，会报错
+
+【方法三】
+select address,avg(salary) from customers 
+where not(address = 'Beijing')
+group by address;
+
+【方法四，子查询，明天讲】
+select address,avg(salary) from customers where address in ('Beijing','Shanghai') group by address;
+
+distinct 去除重复值，提取唯一的记录，与select语句一起用
+select distinct 列名1 from 表名
+where 条件;
+
+思考题：
+把以下结果按照address字母先后顺序排列：
+select distinct address from customers
+order by address;
+
+
+列出customers表中，分别列出不同城市的顾客的人数
+select count(distinct address) from customers;
+
+select address,count(address) from customers group by address;
+
+
+Alias：给表或者列临时起个别名
+select 列名 from 表名 as 新的表名;
+
+select 列名 as 新的列名 from 表名;
+
+例子：
+select ID as c_id from customers;
+
+
+练习：
+选出customers表中的最高工资，并且重命名为max_salary
+select max(salary-salary*0.1) as max_salary from customers;
+
+
+joins 连接，作用是：多表查询
+利用两个表中共同含有的列的相同值来连接
+
+select 列名 from 第一个表，第二个表
+where 第一个表.列名 = 第二个表.列名;
+
+例子：
+select id, name, salary, o_name, amount 
+from customers,orders
+where customers.id = orders.c_id;
+
+练习题：
+打印出顾客消费额度amount超过其工资salary的人员名单，工资，消费额度
+
+提示：
+select...from ...
+where ... and ...
+
+select name, salary, amount 
+from customers,orders
+where customers.id = orders.c_id and amount > salary;
+
+union: 综合多个select语句，且返回不重复的行
+
+select 列名1，..,列名n from 表1
+where 条件
+union
+select 列名1，..,列名n from 表2
+where 条件;
+
+例子：
+选中customers表中，年龄小于25岁和大于27岁的人的姓名和年龄
+方法1：or
+select name, age from customers
+where age < 25 or age > 27;
+
+方法2: union
+select name, age from customers
+where age < 25
+union
+select name, age from customers
+where age > 27;
+
+【注意】
+1.每个select语句中必须选中相同数目的列
+2.列的数据类型要一致
+3.列的顺序要一致
+
+练习题：
+打印出customers表中，所有顾客的工资，并且，在最后一行，打印出他们的总工资
+提示：union, sum()
+
+select salary from customers
+union
+select sum(salary) from customers;
+
+
+alter 改变表的结构
+添加列
+alter table 表名 add 列名 数据类型;
+
+例子：
+alter table customers add gender char(10);
+
+删除列
+alter table 表名 drop column 列名;
+例子：
+alter table customers drop column gender;
+
+添加列，并设定默认值：
+alter table 表名 add 列名 数据类型 default 默认值;
+
+例子：
+alter table customers add gender char(10) default 'F';
+
+练习题：
+1.往orders表中，添加一列叫公司company，并设定默认值为苹果apple
+提示：alter table,default
+
+2.orders表中，把产品名字o_name不以i开头的订单的company统一修改为其他others
+提示：update,not,like,% 
+
+3.把company是apple的订单记录选中，按照amount从高到低排序
+提示：group by, order by
+
+4.讲orders中的记录，按照company的类别分组，打印出company，和各组的amount的最高值，最低值，平均值和总值
+提示：group by, min(),max(),avg(),sum()
+
+5.把orders中的记录，按照company的类别分组，只打印出分组的amount的总和排在第一位的组的信息
+提示:group by, having, order by, limit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

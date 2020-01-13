@@ -1,0 +1,472 @@
+数据库编程 第一天
+=================
+关系型数据库建模构建块：
+
+数据是以行和列的形式存储数据
+这一系列的行和列称为表(关系)
+表中每一行表示一条记录(元组)
+表中每一列表示记录的一个属性
+一组表组成了数据库
+表与表之间的逻辑关联叫关系
+
+启动mysql客户端
+mysql -u root -p
+123456
+
+退出MySQL客户端程序（断开与MySQL服务器的连接）：
+exit
+quit
+\q
+
+SQL语言语法：
+以关键字开头
+以;结束
+不区分字母大小写
+
+【注意】表的名字区分字母大小写
+
+
+SQL基础
+创建数据库
+create database 数据库名;
+例子：
+create database testDB;
+
+查看mysql中的数据库
+SHOW DATABASES;
+show databases;
+
+选择数据库
+use 数据库名;
+例子：
+use testDB;
+
+创建表格
+create table 表名(
+第一列名 数据类型,
+第二列名 数据类型,
+...
+第N列名 数据类型
+);
+
+
+数据类型：
+字符串：
+- 定长 char
+- 变长 varchar
+数值型：
+- 整型 int
+- 定长小数 decimal, e.g. decimal(5，2) 123.45
+- 浮点型 float
+日期和时间：
+- datetime, date, time
+
+例子：
+
+create table customers(
+ID int,
+name varchar(20),
+age int,
+address char(25),
+salary decimal(18,2)
+);
+
+customers:顾客
+name：姓名
+age:年龄
+address：地址
+salary：工资
+
+查看数据库中的表有哪些
+show tables;
+
+查看表的名称，列名，以及列对应的数据类型
+show create table 表名;
+例子：
+show create table customers;
+
+练习题：
+创建数据库schools(学校)
+使用该数据库，提示：use
+
+创建表students,其中包括字段:
+id学号 int;
+name姓名 varchar(20);
+gender性别 char(20);
+age年龄 int
+
+查询当前数据库中的所有表格
+查询表students中的所有属性名称和数据类型
+
+再创建一个叫teachers的表
+
+insert插入语句
+两种语法：
+1.
+insert into 表名(列名1，列名2，...，列名n)
+values(值1,值2,...,值n);
+
+例子：
+insert into customers(ID,name,age,address,salary)
+values(1,'Ann',30,'Beijing',2000.00);
+
+同时插入多行数据
+insert into customers(ID,name,age,address,salary)
+values
+(2,'Kate',25,'Shanghai',1500.00),
+(3,'Jimmy',23,'Shenzhen',2000.00),
+(4,'Bob',25,'Beijing',6500.00),
+(5,'Susan',27,'Shanghai',8500.00),
+(6,'David',22,'Shenzhen',4500.00);
+
+2.
+insert into customers
+values(7,'Mary',24,'Hangzhou',10000.00);
+
+用一个表去填充另一个表
+insert into 第一个表名 (列名1，列名2，...列名n)
+select 列名1，列名2，...列名n
+from 第二个表名;
+
+select语句
+投影
+select 列名1,列名2,...，列名n
+from 表名;
+
+例子：
+select name from customers;
+
+思考题：
+列出customers表中，顾客的姓名name，年龄age
+select name, age from customers;
+
+选中所有属性
+select * from customers;
+
+
+
+create table customers2(
+ID int,
+name varchar(20),
+age int,
+address char(25),
+salary decimal(18,2)
+);
+
+
+insert into customers2(ID,name,age,address,salary)
+select ID,name,age,address,salary from customers;
+
+select...where...选择
+select 列名1，列名2,...列名n 
+from 表名
+where 条件;
+其中，条件语句内可以是比较或者逻辑运算符
+
+
+例子：
+select * from customers
+where id = 1;
+
+
+运算符总结
+代数: +, -, *, /, %
+比较: =, !=, <>, >, <, >=, <=, !<, !>
+逻辑： AND, BETWEEN, IN, LIKE, NOT, OR, IS NULL
+BETWEEN：在。。之间
+LIKE:像，一般与通配符一起使用
+IS NULL: 为空
+
+
+思考题：
+选出customers表中，年纪大于等于28岁的顾客的姓名，年纪和工资信息
+select name,age,salary from customers
+where age >= 28;
+
+
+练习题：
+创建数据库schools(学校)
+使用该数据库，提示：use
+
+创建表students,其中包括字段:
+id学号 int;
+name姓名 varchar(20);
+gender性别 char(20);
+age年龄 int
+
+查询当前数据库中的所有表格
+查询表students中的所有属性名称和数据类型
+
+再创建一个叫teachers的表,加一列叫姓名的char(25)
+
+~~~~~~~~以下内容可以留在晚自习完成~~~~~~~~~~~
+把住在Beijing的顾客的姓名和住址选中，并插入到一个叫customers_bj的新的表中
+提示：1.create customers_bj...
+
+      2.insert into ....(name,address)
+      select name,address from ...
+      where ...=...;
+
+
+删除表格
+drop table 表名;
+例子：
+create table teachers(
+name char(20)
+);
+
+show tables;
+drop table teachers;
+show tables;
+
+逻辑运算符
+and 并且
+select 列名1,列名2，...,列名n
+from 表名
+where 条件1 and 条件2 ... and 条件n;
+
+例子：
+select name, salary, age from customers
+where salary > 2000 and age <25;
+
+思考题:
+
+选出customers表中，住在Beijing,年纪小于27岁，并且工资大于3000的顾客的所有信息
+select * from customers 
+where address = 'Beijing' and age < 27 and salary > 3000;	
+
+【注意】\c 作用是清空当前的sql语句，重新输入
+
+OR 
+select 列名1,列名2，...,列名n
+from 表名
+where 条件1 or 条件2 ... or 条件n;
+
+例子：
+select name, salary, age from customers
+where salary > 2000 or age <25;
+
+思考题
+选出customers表中，工资小于3000，或者工资大于7000的顾客的名字，工资，地址
+select name,salary,address from customers
+where salary < 3000 or salary > 7000;
+
+级别     操作符
+1        ~ bitwise NOT
+2        * 乘法，/除法, %取模
+3        +，-，&(bitwise and),^(bitwise XOR),|(bitwise OR)
+4        =,>,<,>=,<=,<>,!=,!<,!> 比较操作符
+5        not
+6        and
+7        or,between,in,like
+8        = 赋值
+【注意】sql中可以使用圆括号()来控制优先级
+
+not 和 ()
+
+select * from customers
+where age >= 25;
+
+select * from customers
+where not (age < 25);
+
+思考题：
+选出customers表中，年纪不小于24岁，并且，地址是Beijing或者工资大于4000的顾客信息
+提示：not , (), and, or
+
+
+select * from customers
+where not (age < 24) and (address = 'Beijing' or salary > 4000);
+
+
+选出不满足上述条件的所有顾客信息
+select * from customers 
+where not (not (age < 24) and (address = 'Beijing' or salary > 4000));
+
+
+补充一条数据，用来测试()优先级：
+insert into customers values (8, 'John', 22, 'Beijing', 7000);
+
+between..and.. 在...之间
+select 列名1,列名2,...，列名n
+from 表名
+where 列名x between 第一个值 and 第二个值;
+
+例子：
+select name,age from customers
+where age between 26 and 30;
+
+练习题：
+1 选出customers表中，工资在3000和8000之间的顾客信息
+2 选出满足上述结果的顾客中，年纪小于25岁的顾客信息
+3 选出满足第1条要求的顾客中，年纪小于25岁的顾客信息，或者，地址是Hangzhou的顾客信息
+4 选出满足第1条要求的顾客中，地址不在Beijing，也不在Shenzhen的
+
+create database schools;
+
+use schools;
+
+create table students(
+s_id int not null primary key,
+name varchar(20),
+gender varchar(20),
+age int,
+address varchar(50)
+);
+
+create table teachers(
+name varchar(20) not null primary key,
+gender varchar(20),
+rank varchar(20)
+);
+
+rank: 级别
+
+create table textbooks(
+ISBN varchar(20) not null primary key,
+name varchar(20),
+author varchar(20),
+publisher varchar(20)
+);
+
+textbooks:教科书
+author:作者
+publisher:出版社
+
+create table courses(
+c_id int not null primary key,
+name varchar(20),
+credit int,
+instructor varchar(20),
+ISBN varchar(20),
+foreign key(instructor) references teachers(name),
+foreign key(ISBN) references textbooks(ISBN)
+);
+
+instructor:授课教师
+credit:学分
+references:关联
+foreign key：外键
+primary key：主键
+
+create table registration(
+s_id int not null,
+c_id int not null,
+term varchar(20),
+grade decimal(4,1),
+primary key(s_id, c_id),
+foreign key(s_id) references students(s_id),
+foreign key(c_id) references courses(c_id)
+);
+
+
+insert into students values(1,'Ann','F',21,'Beijing');
+
+insert into textbooks values
+('00000','Intro to SQL','Yang','Remin Press');
+
+insert into teachers values('Yang','F','Instructor');
+
+insert into courses values(1,'Databases',3,'Yang','00000');
+
+insert into registration values(1,1,201711,93.0);
+
+
+演示错误
+1.非空限制
+insert into students values(null,'Ann','F',21,'Beijing');
+
+insert into students values(2,'Bob','M',23,null);
+
+2.主键限制
+insert into students values(2,'Mary','F',24,'Shanghai');
+
+
+思考题:
+查询students表中，地址为空的学生的信息；
+select * from students
+where address is null;
+
+再查询students表中，地址不为空的学生的信息
+
+select * from students
+where address is not null;
+
+
+
+练习题：
+创建数据库schools(学校)
+使用该数据库，提示：use
+
+创建表students,其中包括字段:
+id学号 int;
+name姓名 varchar(20);
+gender性别 char(20);
+age年龄 int
+
+查询当前数据库中的所有表格
+查询表students中的所有属性名称和数据类型
+
+再创建一个叫teachers的表,加一列叫姓名的char(25)
+
+
+练习题：
+把住在Beijing的顾客的姓名和住址选中，并插入到一个叫customers_bj的新的表中
+提示：1.create customers_bj...
+
+      2.insert into ....(name,address)
+      select name,address from ...
+      where ...=...;
+
+1 选出customers表中，工资在3000和8000之间的顾客信息
+2 选出满足上述结果的顾客中，年纪小于25岁的顾客信息
+3 选出满足第1条要求的顾客中，年纪小于25岁的顾客信息，或者，地址是Hangzhou的顾客信息
+4 选出满足第1条要求的顾客中，地址不在Beijing，也不在Shenzhen的
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
